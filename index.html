@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Kanban de Tasques</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/script.js" defer></script>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-600 text-white p-6 shadow-md">
+        <h1 class="text-3x1 font-bold">Kanban de Tasques</h1>
+        <p class="mt-2 text-blue-100">Gestiona les teves tasques de forma visual i organitzada</p>
+    </header>
+
+    <main class="flex-1 p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <aside class="lg:col-span-1 space-y-6">
+                <section class="bg-white p-5 rounded-x1 shadow">
+                    <h2 class="text-x1 font-semibold mb-4">Crear / Editar Tasca</h2>
+                    <form id="formulari-tasca" class="space-y-4">
+                        <input type="hidden" id="tasca-id">
+                        <div>
+                            <label for="titol" class="block font-medium mb-1">Titol</label>
+                            <input type="text" id="titol" required>
+                        </div>
+
+                        <div>
+                            <label for="descripcio" class="block font-medium mb-1">Descripció</label>
+                            <textarea id="descripcio" rows="4" placeholder="Descriu la tasca"
+                                class="w-full border rounded-lg p-2"></textarea>
+                        </div>
+
+                        <div>
+                            <label for="prioritat" class="block font-medium mb-1">Prioritat</label>
+                            <select id="prioritat" class="w-full border rounder-lg p-2">
+                                <option value="baixa">Baixa</option>
+                                <option value="mitjana">Mitjana</option>
+                                <option value="alta">Alta</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="data-venciment" class="block font-medium mb-1">Data límit</label>
+                            <input type="date" id="data-venciment" class="w-full border rounded-lg p-2">
+                        </div>
+                        <button type="submit" id="btn-guardar"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">Afegir
+                            Tasca</button>
+                    </form>
+                </section>
+                <section class="bg-white p-5 rounded-x1 shadow">
+                    <h2 class="text-x1 font-semibold mb-4">Filtres i Cerca</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="filtre-estat" class="block font-medium mb-1">Estat</label>
+                            <select id="filtre-estat" class="w-full border rounded-lg p-2">
+                                <option value="tots">Tots</option>
+                                <option value="perFer">Per fer</option>
+                                <option value="fet">Fet</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="filtre-prioritat" class="block font-medium mb-1">Prioritat</label>
+                            <select id="filtre-prioritat" class="w-full border rounded-lg p-2">
+                                <option value="totes">Totes</option>
+                                <option value="baixa">Baixa</option>
+                                <option value="mitjana">Mitjana</option>
+                                <option value="alta">Alta</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="cerca" class="block font-medium mb-1">Cercar</label>
+                            <input typus="search" id="cerca" placeholder="Buscar tasca..."
+                                class="w-full border rounded-lg p-2">
+                        </div>
+                    </div>
+                </section>
+                <section class="bg-white p-5 rounded-xl shadow">
+
+                    <h2 class="text-xl font-semibold mb-4">
+                        Estadístiques
+                    </h2>
+
+                    <ul class="space-y-2">
+
+                        <li>
+                            Total tasques:
+                            <span id="total-tasques" class="font-bold">0</span>
+                        </li>
+
+                        <li>
+                            Per fer:
+                            <span id="total-per-fer" class="font-bold">0</span>
+                        </li>
+
+                        <li>
+                            En curs:
+                            <span id="total-en-curs" class="font-bold">0</span>
+                        </li>
+
+                        <li>
+                            Fet:
+                            <span id="total-fet" class="font-bold">0</span>
+                        </li>
+
+                        <li>
+                            Completades:
+                            <span id="percentatge-fet" class="font-bold">0%</span>
+                        </li>
+                    </ul>
+                </section>
+            </aside>
+            <section class="lg:col-span-3">
+                <h2 class="text-2x1 font-bold mb-6">Tauler Kanban</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <section class="bg-white rounded-xl shadow p-4">
+                        <h3 class="text-lg font-semibold mb-4 text-center">Per fer</h3>
+                        <div id="tasques-perFer" class="space-y-4 min-h[200px]">
+
+                        </div>
+                    </section>
+                    <section class="bg-white rounded-xl shadow p-4">
+                        <h3 class="text-lg font-semibold mb-4 text-center">En curs</h3>
+                        <div id="tasques-enCurs" class="space-y-4 min-h[200px]">
+
+                        </div>
+                    </section>
+                    <section class="bg-white rounded-xl shadow p-4">
+                        <h3 class="text-lg font-semibold mb-4 text-center">Fet</h3>
+                        <div id="tasques-fet" class="space-y-4 min-h[200px]">
+
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="bg-gray-800 text-white text-center p-4 mt-6">
+    <p>
+      Projecte Kanban - HTML, CSS, JavaScript i TailwindCSS
+    </p>
+  </footer>
+
+</body>
