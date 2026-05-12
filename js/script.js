@@ -11,13 +11,14 @@ function carregarTasques() {
 
     if (tasquesGuardades) {
         tasques = JSON.parse(tasquesGuardades);
+
         if (tasques.length > 0) {
-            return true
+            return true;
         }
-    } else {
-        tasques = []
-        return false
     }
+
+    tasques = [];
+    return false;
 }
 
 /* Función para guardar tareas */
@@ -131,7 +132,6 @@ function gestionarFormulari(event) {
     formulariTasca.reset();
     renderTauler();
 }
-formulariTasca.addEventListener("submit", gestionarFormulari);
 /* Función que elimina una tarea */
 function eliminarTasca(tasca){
     const confirmar = confirm("Segur que vol eliminar aquesta tasca?")
@@ -151,6 +151,11 @@ function eliminarTasca(tasca){
 function crearTargetaTasca(tasca) {
     const targeta = document.createElement("article");
     targeta.classList.add("targeta-tasca");
+    /* Hacer que la tarjeta sea draggeable */
+    targeta.setAttribute("draggable", "true");
+    targeta.addEventListener("dragstart", function(event) {
+        event.dataTransfer.setData("text/plain", tasca.id)
+    });
 
     const tascaTitol = document.createElement("h4");
     tascaTitol.classList.add("titol-tasca");
@@ -225,6 +230,34 @@ function crearTargetaTasca(tasca) {
     return targeta;
 
 }
+/* Función para la utilidad de drag and drop */
+function columnaDrop(columna, nouEstat) {
+    columna.addEventListener("dragover", function(event) {
+        event.preventDefault()
+    });
+
+    columna.addEventListener("drop", function(event) {
+        event.preventDefault();
+
+        const idTasca = event.dataTransfer.getData("text/plain");
+
+        const tasca = tasques.find(tasca => tasca.id === idTasca);
+
+        if (tasca) {
+            tasca.estat = nouEstat;
+            guardarTasques();
+            renderTauler();
+        }
+    });
+}
+
+/* Función que activa el drag and drop en las columnas */
+
+function activarDragAndDrop() {
+    columnaDrop(columnaEncurs, "enCurs");
+    columnaDrop(columnaPerfer, "perFer");
+    columnaDrop(columnaFet, "fet");
+}
 /* Función que rellana el formulario para editarlo */ 
 
 function omplirFormulari(tasca) {
@@ -269,5 +302,6 @@ function pruebaApp() {
 formulariTasca.addEventListener("submit", gestionarFormulari);
 filtreEstat.addEventListener("change", renderTauler)
 filtrePrioritat.addEventListener("change", renderTauler)
-inputCerca.addEventListener("change", renderTauler)
+inputCerca.addEventListener("input", renderTauler)
+activarDragAndDrop();
 pruebaApp();

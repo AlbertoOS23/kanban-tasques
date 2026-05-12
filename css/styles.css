@@ -75,3 +75,11 @@ body {
 .boto-eliminar:hover {
     background-color: #aa0606;
 }
+
+/* Altura mínima para que la función de drag and drop sea más fácil de hacer funcionar */
+
+#tasques-perFer,
+#tasques-enCurs,
+#tasques-fet {
+    min-height: 200px;
+}
