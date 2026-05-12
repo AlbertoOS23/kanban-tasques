@@ -24,18 +24,23 @@ function guardarTasques() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasques))
 }
 
-function crearTareaPrueba() {
-    const novaTasca = {
+/* Función para crear una tarea */
+function crearTasca(titol, descripcio, prioritat, dataVenciment,estat = "perFer") {
+    return {
         id: crypto.randomUUID(),
-        titol: "Prueba",
-        descripcio: "Prueba para comprobar localStorage",
-        prioritat: "mitjana",
-        dataVenciment: "2026-05-20",
-        estat: "perFer",
+        titol: titol,
+        descripcio: descripcio,
+        prioritat: prioritat,
+        dataVenciment: dataVenciment,
+        estat: estat,
         creatEl: new Date().toISOString()
-    };
+    }
+}
+/* Función que crea una Tarea si no hay ninguna creada */
+function crearTareaPrueba() {
+    const tascaProva = crearTasca("Prueba", "Prueba para comprobar localStorage", "mitjana", "2026-05-20");
 
-    tasques.push(novaTasca);
+    tasques.push(tascaProva);
     guardarTasques();
 }
 
