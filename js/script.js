@@ -85,6 +85,22 @@ function getTasquesFiltrades(tasques, filtres) {
     });
 };
 
+/* Función para mostrar las estadísticas */
+
+function estadisticasTareas(tasques) {
+    totalTasques.textContent = tasques.length;
+    const tasquesPerFer = tasques.filter(tasca => tasca.estat === "perFer").length
+    totalPerFer.textContent = tasquesPerFer;
+    const tasquesEnCurs = tasques.filter(tasca => tasca.estat === "enCurs").length
+    totalEnCurs.textContent = tasquesEnCurs;
+    const tasquesFet = tasques.filter(tasca => tasca.estat === "fet").length
+    totalFet.textContent = tasquesFet;
+    let percentatge = 0
+    if (tasques.length > 0) {
+        percentatge = Math.round((tasquesFet / tasques.length) * 100)
+    }
+    percentatgeFet.textContent = percentatge + "%";
+}
 /* Función que gestiona el Formulario para añadir o editar una tarea */
 
 function gestionarFormulari(event) {
@@ -241,7 +257,7 @@ function renderTauler(){
             columnaFet.appendChild(targetaTasca);
         }
     })
-
+    estadisticasTareas(tasques)
 }
 function pruebaApp() {
     const hayTareas = carregarTasques();
