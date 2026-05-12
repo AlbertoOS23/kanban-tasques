@@ -48,7 +48,7 @@ function crearTareaPrueba() {
 
 
 
-/* elementos del DOM con los que trabajaremos */
+/* elementos del DOM con los que trabajaremos para el formulario */
 
 const formulariTasca = document.getElementById("formulari-tasca");
 const idTasca = document.getElementById("tasca-id")
@@ -60,6 +60,30 @@ const botonGuardar = document.getElementById("btn-guardar")
 const columnaPerfer = document.getElementById("tasques-perFer");
 const columnaEncurs = document.getElementById("tasques-enCurs");
 const columnaFet = document.getElementById("tasques-fet");
+
+/* Elementos del DOM que utilizaremos para el filtro, búsqueda y estadísticas */
+
+const filtreEstat = document.getElementById("filtre-estat");
+const filtrePrioritat = document.getElementById("filtre-prioritat");
+const inputCerca = document.getElementById("cerca");
+
+const totalTasques = document.getElementById("total-tasques");
+const totalPerFer = document.getElementById("total-per-fer");
+const totalEnCurs = document.getElementById("total-en-curs");
+const totalFet = document.getElementById("total-fet");
+const percentatgeFet = document.getElementById("percentatge-fet");
+
+/* Función para Filtrar */
+
+function getTasquesFiltrades(tasques, filtres) {
+    return tasques.filter(tasca => {
+        const coincideixEstat = filtres.estat === "tots" || tasca.estat === filtres.estat;
+        const coincideixPrioritat = filtres.prioritat === "totes" || tasca.prioritat === filtres.prioritat;
+        const coincideixCerca = tasca.titol.toLowerCase().includes(filtres.cerca) || tasca.descripcio.toLowerCase().includes(filtres.cerca);
+        
+        return coincideixEstat && coincideixPrioritat && coincideixCerca;
+    });
+};
 
 /* Función que gestiona el Formulario para añadir o editar una tarea */
 
@@ -201,7 +225,13 @@ function renderTauler(){
     columnaEncurs.innerHTML = "";
     columnaPerfer.innerHTML = "";
     columnaFet.innerHTML= "";
-    tasques.forEach(tasca => {
+    const filtres = {
+        estat: filtreEstat.value,
+        prioritat: filtrePrioritat.value,
+        cerca: inputCerca.value.toLowerCase().trim()
+    };
+    const tasquesFiltrades =getTasquesFiltrades(tasques, filtres);
+    tasquesFiltrades.forEach(tasca => {
         let targetaTasca = crearTargetaTasca(tasca)
         if (tasca.estat === "perFer") {
             columnaPerfer.appendChild(targetaTasca)
@@ -220,5 +250,8 @@ function pruebaApp() {
     }
     renderTauler();
 }
-
+formulariTasca.addEventListener("submit", gestionarFormulari);
+filtreEstat.addEventListener("change", renderTauler)
+filtrePrioritat.addEventListener("change", renderTauler)
+inputCerca.addEventListener("change", renderTauler)
 pruebaApp();
