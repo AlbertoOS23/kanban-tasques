@@ -11,7 +11,9 @@ function carregarTasques() {
 
     if (tasquesGuardades) {
         tasques = JSON.parse(tasquesGuardades);
-        return true
+        if (tasques.length > 0) {
+            return true
+        }
     } else {
         tasques = []
         return false
@@ -44,17 +46,7 @@ function crearTareaPrueba() {
     guardarTasques();
 }
 
-function pruebaApp() {
-    const hayTareas = carregarTasques();
-    if (!hayTareas){
-        crearTareaPrueba();
-        console.log("Tarea de prueba", tasques)
-    } else {
-        console.log("Tareas", tasques)
-    }
 
-    renderTauler();
-}
 
 /* elementos del DOM con los que trabajaremos */
 
@@ -69,7 +61,7 @@ const columnaPerfer = document.getElementById("tasques-perFer");
 const columnaEncurs = document.getElementById("tasques-enCurs");
 const columnaFet = document.getElementById("tasques-fet");
 
-/* Función que gestiona el Formulario */
+/* Función que gestiona el Formulario para añadir o editar una tarea */
 
 function gestionarFormulari(event) {
     event.preventDefault();
@@ -83,28 +75,91 @@ function gestionarFormulari(event) {
         alert("El titol és obligatori");
         return
     } 
-
-    const novaTasca = crearTasca(titol, descripcio, prioritat, dataVenciment);
-
-    tasques.push(novaTasca);
+    if (idTasca.value) {
+        const tasca = tasques.find( tasca => tasca.id === idTasca.value);
+        tasca.titol = titol;
+        tasca.descripcio = descripcio;
+        tasca.prioritat = prioritat;
+        tasca.dataVenciment = dataVenciment;
+        botonGuardar.textContent = "Afegir Tasca";
+    } else {
+        const novaTasca = crearTasca(titol, descripcio, prioritat, dataVenciment);
+        tasques.push(novaTasca);
+    }
     guardarTasques();
+    idTasca.value = "";
     formulariTasca.reset();
     renderTauler();
 }
 formulariTasca.addEventListener("submit", gestionarFormulari);
-
+/* Función que elimina una tarea */
+function eliminarTasca(tasca){
+    const confirmar = confirm("Segur que vol eliminar aquesta tasca?")
+    if (!confirmar) {
+        return
+    } else {
+        tasques = tasques.filter(tascaActual => tascaActual.id !== tasca.id);
+        formulariTasca.reset();
+        idTasca.value = "";
+        botonGuardar.textContent = "Afegir tasca";
+        guardarTasques();
+        renderTauler();
+    }
+}
 /* Función que crea una targeta para añadirla al HTML */
 
 function crearTargetaTasca(tasca) {
     const targeta = document.createElement("article");
     targeta.classList.add("targeta-tasca");
+
     const tascaTitol = document.createElement("h4");
     tascaTitol.classList.add("titol-tasca");
     tascaTitol.textContent = tasca.titol;
+    
     const tascaDescripcio = document.createElement("p");
     tascaDescripcio.textContent = tasca.descripcio;
+    
     const dataTasca = document.createElement("p");
     dataTasca.textContent = tasca.dataVenciment;
+    /* Botón editar y su función al clicar */
+    const botoEditar = document.createElement("button");
+    botoEditar.textContent = "Editar tasca";
+    botoEditar.classList.add("boto-editar");
+    botoEditar.addEventListener("click", function() {
+        botonGuardar.textContent = "Guardar canvis";
+        omplirFormulari(tasca);
+    })
+    /* Botón eliminar y su función al clicar */
+    const botoEliminar = document.createElement("button");
+    botoEliminar.textContent = "Eliminar tasca";
+    botoEliminar.classList.add("boto-eliminar");
+    botoEliminar.addEventListener("click", function() {
+            eliminarTasca(tasca)
+    })
+    
+    /* Select para cambiar el estado de la tasca */
+    const labelEstat = document.createElement("label");
+    labelEstat.textContent ="Estat"
+    
+    const tascaEstat = document.createElement("select");
+    const estatPerFer = document.createElement("option");
+    estatPerFer.value = "perFer";
+    estatPerFer.textContent = "Per fer"
+    
+    const estatEnCurs = document.createElement("option");
+    estatEnCurs.value= "enCurs";
+    estatEnCurs.textContent = "En curs";
+    
+    const estatFet = document.createElement("option");
+    estatFet.value = "fet";
+    estatFet.textContent ="Fet";
+    
+    tascaEstat.addEventListener("change", function() {
+    tasca.estat = tascaEstat.value;
+    guardarTasques();
+    renderTauler();
+    });
+
     const tascaPrioritat = document.createElement("p");
     tascaPrioritat.textContent = "Prioritat: " + tasca.prioritat;
     if (tasca.prioritat === "alta") {
@@ -114,12 +169,31 @@ function crearTargetaTasca(tasca) {
     } else {
         targeta.classList.add("prioritat-baixa");
     }
+    /* agregar los elementos a la targeta */
     targeta.appendChild(tascaTitol);
     targeta.appendChild(tascaDescripcio);
     targeta.appendChild(dataTasca);
     targeta.appendChild(tascaPrioritat);
+    targeta.appendChild(labelEstat)
+    tascaEstat.appendChild(estatPerFer)
+    tascaEstat.appendChild(estatEnCurs)
+    tascaEstat.appendChild(estatFet)
+    tascaEstat.value = tasca.estat;
+    targeta.appendChild(tascaEstat)
+    targeta.appendChild(botoEditar)
+    targeta.appendChild(botoEliminar)
     return targeta;
 
+}
+/* Función que rellana el formulario para editarlo */ 
+
+function omplirFormulari(tasca) {
+    idTasca.value = tasca.id;
+    tascaTitol.value = tasca.titol;
+    tascaDescripcio.value = tasca.descripcio;
+    tascaDataVenciment.value = tasca.dataVenciment;
+    tascaPrioritat.value = tasca.prioritat;
+ 
 }
 /* Función que escribe en las columnas las tareas que coinciden */
 
@@ -138,6 +212,13 @@ function renderTauler(){
         }
     })
 
+}
+function pruebaApp() {
+    const hayTareas = carregarTasques();
+    if (!hayTareas){
+        crearTareaPrueba();
+    }
+    renderTauler();
 }
 
 pruebaApp();

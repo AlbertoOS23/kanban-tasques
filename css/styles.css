@@ -41,3 +41,37 @@ body {
 .prioritat-baixa {
     border-left-color: #22c55e;
 }
+.boto-editar {
+    background-color: #2563eb;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 0.5rem 1rem;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.boto-editar:hover {
+    background-color: #1d4ed8;
+}
+.boto-eliminar {
+    background-color: #b60707;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 0.5rem 1rem;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.boto-eliminar:hover {
+    background-color: #aa0606;
+}
